@@ -1,0 +1,170 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Marble Run Board Example</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one projector-width column; code left, scale drawing right, then trace table and AP CSP links */
+:root{
+  --bg:#f7f3ec; --panel:#ffffff; --fg:#231a12; --muted:#6b5c4c; --line:#d9cdbb;
+  --kraft:#b07a3c; --kraft-soft:#efe0c9; --c0:#c2410c; --c1:#1d4ed8; --c2:#15803d; --cfinal:#7c3aed;
+  --code-bg:#1f1912; --code-fg:#f3e9da; --kw:#f0a35c; --num:#9fd3a8; --cm:#a8977f; --fn:#8fb8f5;
+  --display:"Archivo",system-ui,sans-serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#17130f; --panel:#221c16; --fg:#f2e9dc; --muted:#b3a490; --line:#3d3226;
+  --kraft:#d79b55; --kraft-soft:#3a2c1c; --c0:#fb8a4f; --c1:#7aa2ff; --c2:#5fd38a; --cfinal:#b79cff;
+  --code-bg:#0f0c09; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17130f; --panel:#221c16; --fg:#f2e9dc; --muted:#b3a490; --line:#3d3226;
+  --kraft:#d79b55; --kraft-soft:#3a2c1c; --c0:#fb8a4f; --c1:#7aa2ff; --c2:#5fd38a; --cfinal:#b79cff;
+  --code-bg:#0f0c09; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:clamp(16px,1.35vw,21px);line-height:1.5}
+.wrap{max-width:1280px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+header{display:grid;gap:6px}
+.eyebrow{font-family:var(--mono);font-size:.78em;letter-spacing:.08em;text-transform:uppercase;color:var(--kraft);font-weight:700}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,3.6vw,54px);line-height:1.05;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:800;font-size:1.3em;margin:0 0 10px;text-wrap:balance}
+.lede{color:var(--muted);max-width:70ch;margin:0}
+.cmds{display:flex;flex-wrap:wrap;gap:10px 22px;font-family:var(--mono);font-size:.9em}
+.cmds span{background:var(--kraft-soft);padding:4px 10px;border-radius:4px}
+.main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:28px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:1fr}}
+.main>*{min-width:0}
+pre{background:var(--code-bg);color:var(--code-fg);font-family:var(--mono);font-size:clamp(14px,1.25vw,20px);line-height:1.6;padding:20px 22px;border-radius:8px;overflow-x:auto;margin:0}
+.kw{color:var(--kw);font-weight:700}.num{color:var(--num)}.cm{color:var(--cm);font-style:italic}.fn{color:var(--fn)}
+.ln{color:var(--cm);user-select:none;display:inline-block;width:2ch;margin-right:1.2ch;text-align:right}
+.figure{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+svg text{font-family:var(--mono)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.85em;color:var(--muted);margin-top:8px;padding-inline:6px}
+.legend i{display:inline-block;width:18px;height:4px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:.95em}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-family:var(--mono);font-size:.78em;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+td code{font-family:var(--mono)}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:28px}
+.two>*{min-width:0}
+.concepts{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.concepts li{display:grid;grid-template-columns:9.5em 1fr;gap:12px;align-items:baseline}
+.concepts b{font-family:var(--display);font-weight:600}
+@media (max-width:520px){.concepts li{grid-template-columns:1fr;gap:0}}
+.ask{border-left:4px solid var(--kraft);padding:4px 0 4px 16px}
+.ask ol{margin:6px 0 0;padding-left:1.3em;display:grid;gap:6px}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">AP CSP · Cardboard Marble Run · Worked example</div>
+    <h1>Build a zig-zag with a loop and a procedure</h1>
+    <p class="lede">The box runs from x = −55 to 55 and from y = 0 (floor) to 80 (top). Every ramp you place is one line of code. A loop lets one block of code place many ramps.</p>
+    <div class="cmds"><span>ramp(x1, y1, x2, y2)</span><span>wall(x, y_bottom, y_top)</span></div>
+  </header>
+
+  <section class="main">
+    <div>
+      <h2>The program</h2>
+<pre><span class="ln">1</span><span class="kw">def</span> <span class="fn">ramp_pair</span>(y, drop):
+<span class="ln">2</span>    ramp(<span class="num">-54</span>, y, <span class="num">48</span>, y - drop)
+<span class="ln">3</span>    ramp(<span class="num">54</span>, y - drop - <span class="num">5</span>, <span class="num">-48</span>, y - <span class="num">2</span>*drop - <span class="num">5</span>)
+<span class="ln">4</span>
+<span class="ln">5</span>y = <span class="num">74</span>
+<span class="ln">6</span><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>):
+<span class="ln">7</span>    ramp_pair(y, <span class="num">5</span>)
+<span class="ln">8</span>    y = y - <span class="num">20</span>
+<span class="ln">9</span>
+<span class="ln">10</span>ramp(<span class="num">-54</span>, y, <span class="num">30</span>, y - <span class="num">6</span>)  <span class="cm"># last ramp</span></pre>
+      <p class="lede" style="margin-top:12px">10 lines of code place 7 pieces of cardboard. Without the loop and the procedure, you would type 7 separate <code>ramp()</code> lines.</p>
+    </div>
+
+    <div>
+      <h2>What it builds (drawn to scale)</h2>
+      <div class="figure">
+        <svg viewBox="0 0 760 540" width="100%" role="img" aria-label="Scale drawing of the box with seven ramps zig-zagging down">
+          <!-- grid: x→40+(x+55)*6, y→20+(80-y)*6 -->
+          <g stroke="var(--line)" stroke-width="1">
+            <line x1="100" y1="20" x2="100" y2="500"/><line x1="220" y1="20" x2="220" y2="500"/><line x1="340" y1="20" x2="340" y2="500"/><line x1="460" y1="20" x2="460" y2="500"/><line x1="580" y1="20" x2="580" y2="500"/>
+            <line x1="40" y1="80" x2="700" y2="80"/><line x1="40" y1="200" x2="700" y2="200"/><line x1="40" y1="320" x2="700" y2="320"/><line x1="40" y1="440" x2="700" y2="440"/>
+          </g>
+          <rect x="40" y="20" width="660" height="480" fill="none" stroke="var(--kraft)" stroke-width="4"/>
+          <g fill="var(--muted)" font-size="14">
+            <text x="100" y="522" text-anchor="middle">−45</text><text x="220" y="522" text-anchor="middle">−25</text><text x="370" y="522" text-anchor="middle">x = 0</text><text x="460" y="522" text-anchor="middle">25</text><text x="580" y="522" text-anchor="middle">45</text>
+            <text x="708" y="84">70</text><text x="708" y="204">50</text><text x="708" y="324">30</text><text x="708" y="444">10</text><text x="708" y="504">0</text>
+          </g>
+          <line x1="340" y1="20" x2="340" y2="500" stroke="var(--muted)" stroke-dasharray="4 6"/>
+          <g stroke-width="7" stroke-linecap="round" fill="none">
+            <line x1="46" y1="56" x2="658" y2="86" stroke="var(--c0)"/>
+            <line x1="694" y1="116" x2="82" y2="146" stroke="var(--c0)"/>
+            <line x1="46" y1="176" x2="658" y2="206" stroke="var(--c1)"/>
+            <line x1="694" y1="236" x2="82" y2="266" stroke="var(--c1)"/>
+            <line x1="46" y1="296" x2="658" y2="326" stroke="var(--c2)"/>
+            <line x1="694" y1="356" x2="82" y2="386" stroke="var(--c2)"/>
+            <line x1="46" y1="416" x2="550" y2="452" stroke="var(--cfinal)"/>
+          </g>
+          <g fill="var(--fg)" font-size="15" font-weight="700">
+            <text x="56" y="46">y = 74</text><text x="56" y="166">y = 54</text><text x="56" y="286">y = 34</text><text x="56" y="406">y = 14</text>
+          </g>
+        </svg>
+        <div class="legend">
+          <span><i style="background:var(--c0)"></i>i = 0</span>
+          <span><i style="background:var(--c1)"></i>i = 1</span>
+          <span><i style="background:var(--c2)"></i>i = 2</span>
+          <span><i style="background:var(--cfinal)"></i>line 10, after the loop</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Trace the loop</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>i</th><th>y going in</th><th>Ramp A (line 2)</th><th>Ramp B (line 3)</th><th>y after line 8</th></tr></thead>
+        <tbody>
+          <tr><td><span class="sw" style="background:var(--c0)"></span>0</td><td>74</td><td><code>ramp(-54, 74, 48, 69)</code></td><td><code>ramp(54, 64, -48, 59)</code></td><td>54</td></tr>
+          <tr><td><span class="sw" style="background:var(--c1)"></span>1</td><td>54</td><td><code>ramp(-54, 54, 48, 49)</code></td><td><code>ramp(54, 44, -48, 39)</code></td><td>34</td></tr>
+          <tr><td><span class="sw" style="background:var(--c2)"></span>2</td><td>34</td><td><code>ramp(-54, 34, 48, 29)</code></td><td><code>ramp(54, 24, -48, 19)</code></td><td>14</td></tr>
+          <tr><td><span class="sw" style="background:var(--cfinal)"></span>—</td><td>14</td><td colspan="2"><code>ramp(-54, 14, 30, 8)</code> runs once after the loop ends</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="two">
+    <div>
+      <h2>Where the AP CSP ideas show up</h2>
+      <ul class="concepts">
+        <li><b>Sequence</b><span>Lines run top to bottom, so ramps are placed from the top of the box down.</span></li>
+        <li><b>Iteration</b><span><code>for i in range(3)</code> repeats lines 7–8 three times.</span></li>
+        <li><b>Variables</b><span><code>y</code> remembers the current height and drops by 20 each pass.</span></li>
+        <li><b>Procedure</b><span><code>ramp_pair</code> bundles two ramps under one name, with parameters <code>y</code> and <code>drop</code>.</span></li>
+        <li><b>Abstraction</b><span>Line 7 says "make a pair" without caring how the pair is built.</span></li>
+      </ul>
+      <h2 style="margin-top:22px">Same idea in AP exam pseudocode</h2>
+<pre>PROCEDURE rampPair(y, drop)
+{
+   ramp(-54, y, 48, y - drop)
+   ramp(54, y - drop - 5, -48, y - 2 * drop - 5)
+}
+y ← 74
+REPEAT 3 TIMES
+{
+   rampPair(y, 5)
+   y ← y - 20
+}</pre>
+    </div>
+    <div class="ask">
+      <h2>Think about it</h2>
+      <ol>
+        <li>What would <code>y</code> be after the loop if it were <code>range(4)</code>? Would the last ramp still fit in the box?</li>
+        <li>Change <code>drop</code> from 5 to 3. Do the ramps get steeper or flatter? Will the marble go faster or slower?</li>
+        <li>Which single number would you change to add more ramps without changing the spacing?</li>
+        <li>Why do ramp A and ramp B stop at 48 and −48 instead of touching the wall?</li>
+        <li>Type this into the site and run it. Where does the marble land? What would you change to hit the cup?</li>
+      </ol>
+      <p class="lede" style="margin-top:12px">Answers to 1–4: <b>y = −6</b> (the last ramp would go below the floor, so no) · <b>flatter, slower</b> · <b>the 3 in range(3)</b> along with the 20 gap · <b>the gap lets the marble fall to the next ramp</b>.</p>
+    </div>
+  </section>
+</div>
+
+</body></html>
